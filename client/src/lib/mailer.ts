@@ -1,18 +1,50 @@
-import nodemailer from "nodemailer"
+// import nodemailer from "nodemailer"
+
+// const transporter = nodemailer.createTransport({
+//   service:"gmail",
+//   auth: {
+//     user:process.env.EMAIL,
+//     pass:process.env.PASS, 
+//   },
+// });
+
+// export const sendMail=async (to:string,subject:string,html:string)=>{
+// await transporter.sendMail({
+//  from:`"Sarthi" <${process.env.EMAIL}> `,
+//  to,
+//  subject,
+//  html
+// })
+// }
+
+import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  service:"gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
   auth: {
-    user:process.env.EMAIL,
-    pass:process.env.PASS, 
+    user: process.env.EMAIL,
+    pass: process.env.PASS,
   },
 });
 
-export const sendMail=async (to:string,subject:string,html:string)=>{
-await transporter.sendMail({
- from:`"Sarthi" <${process.env.EMAIL}> `,
- to,
- subject,
- html
-})
-}
+export const sendMail = async (
+  to: string,
+  subject: string,
+  html: string
+) => {
+  try {
+    const info = await transporter.sendMail({
+      from: `"Sarthi" <${process.env.EMAIL}>`,
+      to,
+      subject,
+      html,
+    });
+
+    console.log("Email sent:", info.messageId);
+  } catch (error) {
+    console.log("MAIL ERROR:", error);
+    throw error;
+  }
+};

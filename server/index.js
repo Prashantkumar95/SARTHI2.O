@@ -21,6 +21,9 @@ const io=new Server(server,{
     }
 })
 
+app.get("/", (req, res) => {
+  res.send("Server is running smoothly!");
+});
 
 
 app.post("/emit", async (req, res) => {

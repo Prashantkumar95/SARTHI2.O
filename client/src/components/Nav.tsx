@@ -353,6 +353,318 @@
 //   );
 // }
 
+// "use client";
+
+// import { motion, AnimatePresence } from "framer-motion";
+// import Image from "next/image";
+// import Link from "next/link";
+// import { useEffect, useState, useRef } from "react";
+// import { usePathname, useRouter } from "next/navigation";
+// import { Menu, X, LogOut, Bike, Car, Truck, ChevronRight } from "lucide-react";
+// import AuthModal from "./AuthModal";
+// import { useDispatch, useSelector } from "react-redux";
+// import { AppDispatch, RootState } from "@/redux/store";
+// import { signOut } from "next-auth/react";
+// import { setUserData } from "@/redux/userSlice";
+// import axios from "axios";
+
+// /* ✅ FIXED NAV STRUCTURE */
+// const NAV_ITEMS = [
+//   { label: "Home", href: "/" },
+//   { label: "Bookings", href: "/bookings" },
+ 
+//   { label: "FAQ", href: "/faq" },
+//   { label: "Contact", 
+//     href: "/contact",
+//   internal:true,
+// },
+//   {
+//   label: "Generate Your Trip",
+//   href: "https://ai-trip-planner-sepia-nine.vercel.app/create-trip",
+//   external: true,
+// },
+// ];
+
+// export default function Nav() {
+//   const [scrolled, setScrolled] = useState(false);
+//   const [menuOpen, setMenuOpen] = useState(false);
+//   const [authOpen, setAuthOpen] = useState(false);
+//   const [profileOpen, setProfileOpen] = useState(false);
+
+//   const [pendingCount, setPendingCount] = useState(0);
+//   const [activeCount, setActiveCount] = useState(0);
+
+//   const pathname = usePathname();
+//   const router = useRouter();
+//   const profileRef = useRef<HTMLDivElement>(null);
+
+//   const dispatch = useDispatch<AppDispatch>();
+//   const { userData } = useSelector((state: RootState) => state.user);
+
+//   /* Scroll effect */
+//   useEffect(() => {
+//     const onScroll = () => setScrolled(window.scrollY > 30);
+//     window.addEventListener("scroll", onScroll);
+//     return () => window.removeEventListener("scroll", onScroll);
+//   }, []);
+
+//   /* Fetch vendor counts */
+//   useEffect(() => {
+//     if (userData?.role !== "vendor") return;
+
+//     const fetchCounts = async () => {
+//       try {
+//         const res = await axios.get("/api/partner/bookings/counts");
+//         setPendingCount(res.data.pending || 0);
+//         setActiveCount(res.data.active || 0);
+//       } catch {}
+//     };
+
+//     fetchCounts();
+//   }, [userData]);
+
+//   /* Close on route change */
+//   useEffect(() => {
+//     setMenuOpen(false);
+//     setProfileOpen(false);
+//   }, [pathname]);
+
+//   /* Outside click */
+//   useEffect(() => {
+//     const handler = (e: MouseEvent) => {
+//       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+//         setProfileOpen(false);
+//       }
+//     };
+//     document.addEventListener("mousedown", handler);
+//     return () => document.removeEventListener("mousedown", handler);
+//   }, []);
+
+//   const handleLogout = async () => {
+//     await signOut({ redirect: false });
+//     dispatch(setUserData(null));
+//     setProfileOpen(false);
+//     router.push("/");
+//   };
+
+//   /* NAV RENDER */
+//   const renderNavItems = () => {
+//     if (userData?.role === "vendor") {
+//       return (
+//         <>
+//           <Link href="/partner/active-ride" className="text-sm text-gray-300 hover:text-white">
+//             Active Ride
+//           </Link>
+
+//           <Link href="/partner/pending-requests" className="relative text-sm text-gray-300 hover:text-white">
+//             Pending Requests
+//             {pendingCount > 0 && (
+//               <span className="absolute -top-2 -right-5 w-5 h-5 bg-red-500 text-xs rounded-full flex items-center justify-center">
+//                 {pendingCount}
+//               </span>
+//             )}
+//           </Link>
+
+//           <Link href="/partner/bookings" className="relative text-sm text-gray-300 hover:text-white">
+//             My Bookings
+//             {activeCount > 0 && (
+//               <span className="absolute -top-2 -right-5 w-5 h-5 bg-green-500 text-xs rounded-full flex items-center justify-center">
+//                 {activeCount}
+//               </span>
+//             )}
+//           </Link>
+//         </>
+//       );
+//     }
+
+//     return NAV_ITEMS.map((item) => {
+//   const active = pathname === item.href;
+
+//   // 🌐 External link
+//   if (item.external) {
+//     return (
+//       <a
+//         key={item.label}
+//         href={item.href}
+//         target="_blank"
+//         rel="noopener noreferrer"
+//         className="text-sm font-medium text-gray-400 hover:text-white"
+//       >
+//         {item.label}
+//       </a>
+//     );
+//   }
+
+//   // 🧭 Internal link
+//   return (
+//     <Link
+//       key={item.label}
+//       href={item.href}
+//       className={`text-sm font-medium transition ${
+//         active ? "text-white" : "text-gray-400 hover:text-white"
+//       }`}
+//     >
+//       {item.label}
+//     </Link>
+//   );
+// });
+//   };
+
+//   return (
+//     <>
+//       {/* ================= NAVBAR ================= */}
+//       <motion.nav
+//         initial={{ y: -60, opacity: 0 }}
+//         animate={{ y: 0, opacity: 1 }}
+//         className={`fixed top-3 left-1/2 -translate-x-1/2 w-[94%] md:w-[86%] z-50 rounded-full bg-[#0B0B0B] text-white shadow-xl ${
+//           scrolled ? "py-2" : "py-3"
+//         }`}
+//       >
+//         <div className="max-w-7xl mx-auto px-4 md:px-8 flex items-center justify-between">
+
+//           {/* LOGO */}
+//           <Link href="/">
+//             <Image src="/logo1.jpeg" alt="SARTHI" width={50} height={50} />
+//           </Link>
+
+//           {/* DESKTOP NAV */}
+//           <div className="hidden md:flex items-center gap-10">
+//             {renderNavItems()}
+//           </div>
+
+//           {/* RIGHT */}
+//           <div className="flex items-center gap-3">
+
+//             {/* PROFILE */}
+//             <div className="hidden md:block relative" ref={profileRef}>
+//               {!userData ? (
+//                 <button
+//                   onClick={() => setAuthOpen(true)}
+//                   className="px-6 py-2 rounded-full border text-sm hover:bg-white hover:text-black"
+//                 >
+//                   Login
+//                 </button>
+//               ) : (
+//                 <>
+//                   <button
+//                     onClick={() => setProfileOpen((p) => !p)}
+//                     className="w-10 h-10 rounded-full bg-white text-black font-bold"
+//                   >
+//                     {userData.name?.charAt(0).toUpperCase()}
+//                   </button>
+//                   {profileOpen && (
+//                     <div className="absolute top-full right-0 mt-2 w-64 bg-white text-black rounded-lg shadow-lg z-50">
+//                       <ProfileContent userData={userData} handleLogout={handleLogout} router={router} />
+//                     </div>
+//                   )}
+//                 </>
+//               )}
+//             </div>
+
+//             {/* MOBILE MENU BUTTON */}
+//             <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden">
+//               {menuOpen ? <X /> : <Menu />}
+//             </button>
+//           </div>
+//         </div>
+//       </motion.nav>
+
+//       {/* ================= MOBILE MENU ================= */}
+//       <AnimatePresence>
+//         {menuOpen && (
+//           <>
+//             <motion.div
+//               className="fixed inset-0 bg-black/50 z-30"
+//               onClick={() => setMenuOpen(false)}
+//             />
+
+//             <motion.div className="fixed top-[80px] left-1/2 -translate-x-1/2 w-[92%] bg-[#0B0B0B] z-40 rounded-2xl">
+//               <div className="flex flex-col divide-y divide-white/10">
+
+//                 {userData?.role === "vendor" ? (
+//                   <>
+//                     <Link href="/partner/active-ride" className="p-4 text-white">
+//                       Active Ride
+//                     </Link>
+
+//                     <Link href="/partner/pending-requests" className="p-4 text-white">
+//                       Pending Requests
+//                     </Link>
+
+//                     <Link href="/partner/bookings" className="p-4 text-white">
+//                       My Bookings
+//                     </Link>
+//                   </>
+//                 ) : (
+//                   NAV_ITEMS.map((item) => (
+//                     <Link
+//                       key={item.label}
+//                       href={item.href}
+//                       className="p-4 text-white"
+//                       onClick={() => setMenuOpen(false)}
+//                     >
+//                       {item.label}
+//                     </Link>
+//                   ))
+//                 )}
+//               </div>
+//             </motion.div>
+//           </>
+//         )}
+//       </AnimatePresence>
+
+//       {/* AUTH MODAL */}
+//       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
+//     </>
+//   );
+// }
+// function ProfileContent({ userData, handleLogout, router, mobile }: any) {
+//   return (
+//     <div className={`${mobile ? "p-6 pb-10" : "p-5"}`}>
+//       <p className="font-semibold text-lg">{userData.name}</p>
+//       <p className="text-xs uppercase text-gray-500 mb-4">{userData.role}</p>
+
+//       {userData.role !== "vendor" && (
+//         <button
+//           onClick={() => router.push("/partner/onboard/vehicle")}
+//           className="w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl"
+//         >
+//           <VehicleStack />
+//           Become a Partner
+//           <ChevronRight size={16} className="ml-auto" />
+//         </button>
+//       )}
+
+//       <button
+//         onClick={handleLogout}
+//         className="w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl mt-2"
+//       >
+//         <LogOut size={16} />
+//         Logout
+//       </button>
+//     </div>
+//   );
+// }
+
+// function VehicleStack() {
+//   return (
+//     <div className="flex -space-x-2">
+//       <Icon><Bike size={14} /></Icon>
+//       <Icon><Car size={14} /></Icon>
+//       <Icon><Truck size={14} /></Icon>
+//     </div>
+//   );
+// }
+
+// function Icon({ children }: { children: React.ReactNode }) {
+//   return (
+//     <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
+//       {children}
+//     </div>
+//   );
+// }
+
+
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -360,104 +672,163 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, LogOut, Bike, Car, Truck, ChevronRight } from "lucide-react";
+import {
+  Menu,
+  X,
+  LogOut,
+  Bike,
+  Car,
+  Truck,
+  ChevronRight,
+  User,
+} from "lucide-react";
+
 import AuthModal from "./AuthModal";
+
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { signOut } from "next-auth/react";
 import { setUserData } from "@/redux/userSlice";
+
 import axios from "axios";
 
-/* ✅ FIXED NAV STRUCTURE */
+/* ================= NAV ITEMS ================= */
+
 const NAV_ITEMS = [
   { label: "Home", href: "/" },
   { label: "Bookings", href: "/bookings" },
- 
   { label: "FAQ", href: "/faq" },
-  { label: "Contact", 
-    href: "/contact",
-  internal:true,
-},
   {
-  label: "Generate Your Trip",
-  href: "https://ai-trip-planner-sepia-nine.vercel.app/create-trip",
-  external: true,
-},
+    label: "Contact",
+    href: "/contact",
+  },
+  {
+    label: "Generate Your Trip",
+    href: "https://ai-trip-planner-sepia-nine.vercel.app/create-trip",
+    external: true,
+  },
 ];
+
+/* ================= NAV COMPONENT ================= */
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
+
   const [menuOpen, setMenuOpen] = useState(false);
+
   const [authOpen, setAuthOpen] = useState(false);
+
   const [profileOpen, setProfileOpen] = useState(false);
 
   const [pendingCount, setPendingCount] = useState(0);
+
   const [activeCount, setActiveCount] = useState(0);
 
   const pathname = usePathname();
+
   const router = useRouter();
+
   const profileRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch<AppDispatch>();
-  const { userData } = useSelector((state: RootState) => state.user);
 
-  /* Scroll effect */
+  const { userData } = useSelector(
+    (state: RootState) => state.user
+  );
+
+  /* ================= SCROLL EFFECT ================= */
+
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 30);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 30);
+    };
+
     window.addEventListener("scroll", onScroll);
+
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /* Fetch vendor counts */
+  /* ================= FETCH COUNTS ================= */
+
   useEffect(() => {
     if (userData?.role !== "vendor") return;
 
     const fetchCounts = async () => {
       try {
-        const res = await axios.get("/api/partner/bookings/counts");
+        const res = await axios.get(
+          "/api/partner/bookings/counts"
+        );
+
         setPendingCount(res.data.pending || 0);
+
         setActiveCount(res.data.active || 0);
-      } catch {}
+      } catch (error) {
+        console.error(error);
+      }
     };
 
     fetchCounts();
   }, [userData]);
 
-  /* Close on route change */
+  /* ================= CLOSE ON ROUTE CHANGE ================= */
+
   useEffect(() => {
     setMenuOpen(false);
+
     setProfileOpen(false);
   }, [pathname]);
 
-  /* Outside click */
+  /* ================= OUTSIDE CLICK ================= */
+
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(e.target as Node)
+      ) {
         setProfileOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+
+    return () =>
+      document.removeEventListener("mousedown", handler);
   }, []);
+
+  /* ================= LOGOUT ================= */
 
   const handleLogout = async () => {
     await signOut({ redirect: false });
+
     dispatch(setUserData(null));
+
     setProfileOpen(false);
+
+    setMenuOpen(false);
+
     router.push("/");
   };
 
-  /* NAV RENDER */
+  /* ================= NAV ITEMS RENDER ================= */
+
   const renderNavItems = () => {
     if (userData?.role === "vendor") {
       return (
         <>
-          <Link href="/partner/active-ride" className="text-sm text-gray-300 hover:text-white">
+          <Link
+            href="/partner/active-ride"
+            className="text-sm text-gray-300 hover:text-white transition"
+          >
             Active Ride
           </Link>
 
-          <Link href="/partner/pending-requests" className="relative text-sm text-gray-300 hover:text-white">
+          <Link
+            href="/partner/pending-requests"
+            className="relative text-sm text-gray-300 hover:text-white transition"
+          >
             Pending Requests
+
             {pendingCount > 0 && (
               <span className="absolute -top-2 -right-5 w-5 h-5 bg-red-500 text-xs rounded-full flex items-center justify-center">
                 {pendingCount}
@@ -465,8 +836,12 @@ export default function Nav() {
             )}
           </Link>
 
-          <Link href="/partner/bookings" className="relative text-sm text-gray-300 hover:text-white">
+          <Link
+            href="/partner/bookings"
+            className="relative text-sm text-gray-300 hover:text-white transition"
+          >
             My Bookings
+
             {activeCount > 0 && (
               <span className="absolute -top-2 -right-5 w-5 h-5 bg-green-500 text-xs rounded-full flex items-center justify-center">
                 {activeCount}
@@ -478,84 +853,138 @@ export default function Nav() {
     }
 
     return NAV_ITEMS.map((item) => {
-  const active = pathname === item.href;
+      const active = pathname === item.href;
 
-  // 🌐 External link
-  if (item.external) {
-    return (
-      <a
-        key={item.label}
-        href={item.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-sm font-medium text-gray-400 hover:text-white"
-      >
-        {item.label}
-      </a>
-    );
-  }
+      /* EXTERNAL LINK */
 
-  // 🧭 Internal link
-  return (
-    <Link
-      key={item.label}
-      href={item.href}
-      className={`text-sm font-medium transition ${
-        active ? "text-white" : "text-gray-400 hover:text-white"
-      }`}
-    >
-      {item.label}
-    </Link>
-  );
-});
+      if (item.external) {
+        return (
+          <a
+            key={item.label}
+            href={item.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-gray-400 hover:text-white transition"
+          >
+            {item.label}
+          </a>
+        );
+      }
+
+      /* INTERNAL LINK */
+
+      return (
+        <Link
+          key={item.label}
+          href={item.href}
+          className={`text-sm font-medium transition ${
+            active
+              ? "text-white"
+              : "text-gray-400 hover:text-white"
+          }`}
+        >
+          {item.label}
+        </Link>
+      );
+    });
   };
 
   return (
     <>
       {/* ================= NAVBAR ================= */}
+
       <motion.nav
         initial={{ y: -60, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className={`fixed top-3 left-1/2 -translate-x-1/2 w-[94%] md:w-[86%] z-50 rounded-full bg-[#0B0B0B] text-white shadow-xl ${
+        className={`fixed top-3 left-1/2 -translate-x-1/2 w-[94%] md:w-[86%] z-50 rounded-full bg-[#0B0B0B] text-white shadow-xl transition-all duration-300 ${
           scrolled ? "py-2" : "py-3"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-8 flex items-center justify-between">
+          {/* ================= LOGO ================= */}
 
-          {/* LOGO */}
           <Link href="/">
-            <Image src="/logo1.jpeg" alt="SARTHI" width={50} height={50} />
+            <Image
+              src="/logo1.jpeg"
+              alt="SARTHI"
+              width={50}
+              height={50}
+              className="rounded-full"
+            />
           </Link>
 
-          {/* DESKTOP NAV */}
+          {/* ================= DESKTOP NAV ================= */}
+
           <div className="hidden md:flex items-center gap-10">
             {renderNavItems()}
           </div>
 
-          {/* RIGHT */}
-          <div className="flex items-center gap-3">
+          {/* ================= RIGHT ================= */}
 
-            {/* PROFILE */}
-            <div className="hidden md:block relative" ref={profileRef}>
+          <div className="flex items-center gap-3">
+            {/* ================= DESKTOP PROFILE ================= */}
+
+            <div
+              className="hidden md:block relative"
+              ref={profileRef}
+            >
               {!userData ? (
                 <button
                   onClick={() => setAuthOpen(true)}
-                  className="px-6 py-2 rounded-full border text-sm hover:bg-white hover:text-black"
+                  className="px-6 py-2 rounded-full border border-white/20 text-sm hover:bg-white hover:text-black transition"
                 >
                   Login
                 </button>
               ) : (
-                <button
-                  onClick={() => setProfileOpen((p) => !p)}
-                  className="w-10 h-10 rounded-full bg-white text-black font-bold"
-                >
-                  {userData.name?.charAt(0).toUpperCase()}
-                </button>
+                <>
+                  <button
+                    onClick={() =>
+                      setProfileOpen((prev) => !prev)
+                    }
+                    className="w-10 h-10 rounded-full bg-white text-black font-bold flex items-center justify-center"
+                  >
+                    {userData?.name
+                      ?.charAt(0)
+                      ?.toUpperCase() || (
+                      <User size={18} />
+                    )}
+                  </button>
+
+                  <AnimatePresence>
+                    {profileOpen && (
+                      <motion.div
+                        initial={{
+                          opacity: 0,
+                          y: 10,
+                        }}
+                        animate={{
+                          opacity: 1,
+                          y: 0,
+                        }}
+                        exit={{
+                          opacity: 0,
+                          y: 10,
+                        }}
+                        className="absolute top-full right-0 mt-3 w-72 bg-white text-black rounded-2xl shadow-2xl overflow-hidden z-50"
+                      >
+                        <ProfileContent
+                          userData={userData}
+                          handleLogout={handleLogout}
+                          router={router}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </>
               )}
             </div>
 
-            {/* MOBILE MENU BUTTON */}
-            <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden">
+            {/* ================= MOBILE BUTTON ================= */}
+
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="md:hidden"
+            >
               {menuOpen ? <X /> : <Menu />}
             </button>
           </div>
@@ -563,42 +992,161 @@ export default function Nav() {
       </motion.nav>
 
       {/* ================= MOBILE MENU ================= */}
+
       <AnimatePresence>
         {menuOpen && (
           <>
+            {/* OVERLAY */}
+
             <motion.div
-              className="fixed inset-0 bg-black/50 z-30"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={() => setMenuOpen(false)}
+              className="fixed inset-0 bg-black/50 z-30"
             />
 
-            <motion.div className="fixed top-[80px] left-1/2 -translate-x-1/2 w-[92%] bg-[#0B0B0B] z-40 rounded-2xl">
+            {/* MENU */}
+
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="fixed top-[80px] left-1/2 -translate-x-1/2 w-[92%] bg-[#0B0B0B] border border-white/10 z-40 rounded-3xl overflow-hidden"
+            >
               <div className="flex flex-col divide-y divide-white/10">
+                {/* ================= NAVIGATION ================= */}
 
                 {userData?.role === "vendor" ? (
                   <>
-                    <Link href="/partner/active-ride" className="p-4 text-white">
+                    <Link
+                      href="/partner/active-ride"
+                      className="p-4 text-white"
+                      onClick={() => setMenuOpen(false)}
+                    >
                       Active Ride
                     </Link>
 
-                    <Link href="/partner/pending-requests" className="p-4 text-white">
+                    <Link
+                      href="/partner/pending-requests"
+                      className="p-4 text-white"
+                      onClick={() => setMenuOpen(false)}
+                    >
                       Pending Requests
                     </Link>
 
-                    <Link href="/partner/bookings" className="p-4 text-white">
+                    <Link
+                      href="/partner/bookings"
+                      className="p-4 text-white"
+                      onClick={() => setMenuOpen(false)}
+                    >
                       My Bookings
                     </Link>
                   </>
                 ) : (
-                  NAV_ITEMS.map((item) => (
-                    <Link
-                      key={item.label}
-                      href={item.href}
-                      className="p-4 text-white"
-                      onClick={() => setMenuOpen(false)}
+                  NAV_ITEMS.map((item) => {
+                    if (item.external) {
+                      return (
+                        <a
+                          key={item.label}
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-4 text-white"
+                          onClick={() =>
+                            setMenuOpen(false)
+                          }
+                        >
+                          {item.label}
+                        </a>
+                      );
+                    }
+
+                    return (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        className="p-4 text-white"
+                        onClick={() =>
+                          setMenuOpen(false)
+                        }
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  })
+                )}
+
+                {/* ================= MOBILE PROFILE ================= */}
+
+                {userData ? (
+                  <div className="p-4">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center font-bold text-lg">
+                        {userData.name
+                          ?.charAt(0)
+                          ?.toUpperCase()}
+                      </div>
+
+                      <div>
+                        <p className="text-white font-semibold">
+                          {userData.name}
+                        </p>
+
+                        <p className="text-xs uppercase text-gray-400">
+                          {userData.role}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* BECOME PARTNER */}
+
+                    {userData.role !== "vendor" && (
+                      <button
+                        onClick={() => {
+                          router.push(
+                            "/partner/onboard/vehicle"
+                          );
+
+                          setMenuOpen(false);
+                        }}
+                        className="w-full flex items-center gap-3 p-3 rounded-xl text-white hover:bg-white/10 transition"
+                      >
+                        <VehicleStack />
+
+                        Become a Partner
+
+                        <ChevronRight
+                          size={16}
+                          className="ml-auto"
+                        />
+                      </button>
+                    )}
+
+                    {/* LOGOUT */}
+
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 p-3 rounded-xl text-red-400 hover:bg-red-500/10 transition mt-2"
                     >
-                      {item.label}
-                    </Link>
-                  ))
+                      <LogOut size={18} />
+
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <div className="p-4">
+                    <button
+                      onClick={() => {
+                        setAuthOpen(true);
+
+                        setMenuOpen(false);
+                      }}
+                      className="w-full py-3 rounded-full border border-white text-white hover:bg-white hover:text-black transition"
+                    >
+                      Login
+                    </button>
+                  </div>
                 )}
               </div>
             </motion.div>
@@ -606,50 +1154,90 @@ export default function Nav() {
         )}
       </AnimatePresence>
 
-      {/* AUTH MODAL */}
-      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
+      {/* ================= AUTH MODAL ================= */}
+
+      <AuthModal
+        open={authOpen}
+        onClose={() => setAuthOpen(false)}
+      />
     </>
   );
 }
-function ProfileContent({ userData, handleLogout, router, mobile }: any) {
+
+/* ================= PROFILE CONTENT ================= */
+
+function ProfileContent({
+  userData,
+  handleLogout,
+  router,
+}: any) {
   return (
-    <div className={`${mobile ? "p-6 pb-10" : "p-5"}`}>
-      <p className="font-semibold text-lg">{userData.name}</p>
-      <p className="text-xs uppercase text-gray-500 mb-4">{userData.role}</p>
+    <div className="p-5">
+      <p className="font-semibold text-lg">
+        {userData.name}
+      </p>
+
+      <p className="text-xs uppercase text-gray-500 mb-4">
+        {userData.role}
+      </p>
 
       {userData.role !== "vendor" && (
         <button
-          onClick={() => router.push("/partner/onboard/vehicle")}
-          className="w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl"
+          onClick={() =>
+            router.push("/partner/onboard/vehicle")
+          }
+          className="w-full flex items-center gap-3 py-3 px-2 hover:bg-gray-100 rounded-xl transition"
         >
           <VehicleStack />
+
           Become a Partner
-          <ChevronRight size={16} className="ml-auto" />
+
+          <ChevronRight
+            size={16}
+            className="ml-auto"
+          />
         </button>
       )}
 
       <button
         onClick={handleLogout}
-        className="w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl mt-2"
+        className="w-full flex items-center gap-3 py-3 px-2 hover:bg-gray-100 rounded-xl transition mt-2"
       >
         <LogOut size={16} />
+
         Logout
       </button>
     </div>
   );
 }
 
+/* ================= VEHICLE STACK ================= */
+
 function VehicleStack() {
   return (
     <div className="flex -space-x-2">
-      <Icon><Bike size={14} /></Icon>
-      <Icon><Car size={14} /></Icon>
-      <Icon><Truck size={14} /></Icon>
+      <Icon>
+        <Bike size={14} />
+      </Icon>
+
+      <Icon>
+        <Car size={14} />
+      </Icon>
+
+      <Icon>
+        <Truck size={14} />
+      </Icon>
     </div>
   );
 }
 
-function Icon({ children }: { children: React.ReactNode }) {
+/* ================= ICON ================= */
+
+function Icon({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
       {children}

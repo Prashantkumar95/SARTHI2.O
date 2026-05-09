@@ -40,7 +40,7 @@ export default function Contact() {
                   Customer Care
                 </p>
                 <p className="text-lg font-medium">
-                  +91 98765 43210
+                  +91 98755xxxx
                 </p>
               </div>
 
@@ -49,7 +49,7 @@ export default function Contact() {
                   Office Address
                 </p>
                 <p className="text-lg font-medium">
-                  Gwalior, Madhya Pradesh, India
+                  Jaypee University India
                 </p>
               </div>
 

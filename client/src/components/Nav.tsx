@@ -370,19 +370,31 @@ import axios from "axios";
 
 /* ✅ FIXED NAV STRUCTURE */
 const NAV_ITEMS = [
-  { label: "Home", href: "/" },
-  { label: "Bookings", href: "/bookings" },
- 
-  { label: "FAQ", href: "/faq" },
-  { label: "Contact", 
-    href: "/contact",
-  internal:true,
-},
   {
-  label: "Generate Your Trip",
-  href: "https://ai-trip-planner-sepia-nine.vercel.app/create-trip",
-  external: true,
-},
+    label: "Home",
+    href: "/",
+    internal: true,
+  },
+  {
+    label: "Bookings",
+    href: "/bookings",
+    internal: true,
+  },
+  {
+    label: "FAQ",
+    href: "/faq",
+    internal: true,
+  },
+  {
+    label: "Contact",
+    href: "/contact",
+    internal: true,
+  },
+  {
+    label: "Generate Your Trip",
+    href: "https://ai-trip-planner-sepia-nine.vercel.app/create-trip",
+    external: true,
+  },
 ];
 
 export default function Nav() {

@@ -57,20 +57,18 @@ const faqs = [
   },
 ];
 
-const FAQItem = ({
-  faq,
-  isOpen,
-  onClick,
-}: {
+type FAQItemProps = {
   faq: { question: string; answer: string };
   isOpen: boolean;
   onClick: () => void;
-}) => {
+};
+
+const FAQItem = ({ faq, isOpen, onClick }: FAQItemProps) => {
   return (
     <div
       style={{
         border: "1px solid rgba(255,255,255,0.08)",
-        borderRadius: "18px",
+        borderRadius: "16px",
         background: "#161b22",
         marginBottom: "1rem",
         overflow: "hidden",
@@ -81,7 +79,7 @@ const FAQItem = ({
         onClick={onClick}
         style={{
           width: "100%",
-          padding: "1.4rem 1.5rem",
+          padding: "1.2rem 1.4rem",
           background: "transparent",
           border: "none",
           display: "flex",
@@ -108,9 +106,9 @@ const FAQItem = ({
       {isOpen && (
         <div
           style={{
-            padding: "0 1.5rem 1.5rem",
+            padding: "0 1.4rem 1.2rem",
             color: "#cbd5e1",
-            lineHeight: 1.8,
+            lineHeight: 1.7,
           }}
         >
           {faq.answer}
@@ -134,21 +132,12 @@ export default function FAQPage() {
         padding: "4rem 1.5rem",
       }}
     >
-      <div
-        style={{
-          maxWidth: "900px",
-          margin: "0 auto",
-        }}
-      >
-        <div
-          style={{
-            textAlign: "center",
-            marginBottom: "4rem",
-          }}
-        >
+      <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+        {/* HEADER */}
+        <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
           <h1
             style={{
-              fontSize: "3rem",
+              fontSize: "2.8rem",
               fontWeight: 800,
               marginBottom: "1rem",
               background:
@@ -160,87 +149,49 @@ export default function FAQPage() {
             Frequently Asked Questions
           </h1>
 
-          <p
-            style={{
-              color: "#94a3b8",
-              lineHeight: 1.8,
-              fontSize: "1.05rem",
-            }}
-          >
+          <p style={{ color: "#94a3b8", lineHeight: 1.8, fontSize: "1rem" }}>
             Everything you need to know about planning trips, booking rides,
             generating itineraries, and traveling securely with Sarthi.
           </p>
         </div>
 
+        {/* FEATURES */}
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: "1.5rem",
-            marginBottom: "4rem",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "1.2rem",
+            marginBottom: "3rem",
           }}
         >
           {[
-            {
-              icon: <Plane size={24} />,
-              title: "Smart Planning",
-              desc: "AI-powered itinerary generation.",
-            },
-            {
-              icon: <MapPinned size={24} />,
-              title: "Live Navigation",
-              desc: "Real-time travel tracking.",
-            },
-            {
-              icon: <ShieldCheck size={24} />,
-              title: "Secure Platform",
-              desc: "Protected payments & location.",
-            },
-            {
-              icon: <Headphones size={24} />,
-              title: "24/7 Support",
-              desc: "Always available for assistance.",
-            },
-          ].map((item, index) => (
+            { icon: <Plane size={22} />, title: "Smart Planning" },
+            { icon: <MapPinned size={22} />, title: "Live Navigation" },
+            { icon: <ShieldCheck size={22} />, title: "Secure Platform" },
+            { icon: <Headphones size={22} />, title: "24/7 Support" },
+          ].map((item, i) => (
             <div
-              key={index}
+              key={i}
               style={{
                 background: "rgba(255,255,255,0.04)",
                 border: "1px solid rgba(255,255,255,0.08)",
-                borderRadius: "20px",
-                padding: "1.5rem",
+                borderRadius: "16px",
+                padding: "1.2rem",
+                textAlign: "center",
+                color: "#fff",
               }}
             >
-              <div
-                style={{
-                  marginBottom: "1rem",
-                  color: "#60a5fa",
-                }}
-              >
+              <div style={{ color: "#60a5fa", marginBottom: "0.5rem" }}>
                 {item.icon}
               </div>
-
-              <h3
-                style={{
-                  marginBottom: "0.5rem",
-                  color: "#fff",
-                }}
-              >
+              <p style={{ fontSize: "0.95rem", fontWeight: 600 }}>
                 {item.title}
-              </h3>
-
-              <p
-                style={{
-                  color: "#94a3b8",
-                  lineHeight: 1.6,
-                }}
-              >
-                {item.desc}
               </p>
             </div>
           ))}
         </div>
 
+        {/* FAQ LIST */}
         {faqs.map((faq, index) => (
           <FAQItem
             key={faq.question}

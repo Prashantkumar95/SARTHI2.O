@@ -43,58 +43,61 @@ const faqs = [
   {
     question: "Is it safe to share my location?",
     answer:
-      "Absolutely. Sarthi uses encrypted and secure location sharing, ensuring your information is only accessible to authorized travel partners and drivers.",
+      "Yes. Sarthi uses encrypted and secure location sharing so your data stays protected and private.",
   },
   {
     question: "Can I cancel or reschedule a booking?",
     answer:
-      "Yes. Most bookings can be canceled or rescheduled directly from your dashboard, subject to the cancellation policies of the travel provider.",
+      "Yes. Most bookings can be managed directly from your dashboard based on provider policies.",
   },
   {
     question: "Does Sarthi provide real-time ride tracking?",
     answer:
-      "Yes. You can track your ride in real time, view estimated arrival times, and share your live trip status with trusted contacts.",
+      "Yes. You can track rides live, see ETA updates, and share trip status with others.",
   },
 ];
 
-type FAQItemProps = {
+const FAQItem = ({
+  faq,
+  isOpen,
+  onClick,
+}: {
   faq: { question: string; answer: string };
   isOpen: boolean;
   onClick: () => void;
-};
-
-const FAQItem = ({ faq, isOpen, onClick }: FAQItemProps) => {
+}) => {
   return (
     <div
       style={{
+        background: "rgba(255,255,255,0.03)",
         border: "1px solid rgba(255,255,255,0.08)",
-        borderRadius: "16px",
-        background: "#161b22",
-        marginBottom: "1rem",
+        borderRadius: "14px",
+        marginBottom: "12px",
         overflow: "hidden",
-        boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
+        backdropFilter: "blur(10px)",
+        boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
       }}
     >
       <button
         onClick={onClick}
         style={{
           width: "100%",
-          padding: "1.2rem 1.4rem",
+          padding: "16px 18px",
           background: "transparent",
           border: "none",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           cursor: "pointer",
-          fontSize: "1rem",
+          fontSize: "15px",
           fontWeight: 600,
-          color: "#f9fafb",
+          color: "#ffffff",
         }}
       >
         {faq.question}
 
         <ChevronDown
-          size={20}
+          size={18}
           style={{
             transition: "0.3s",
             transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
@@ -106,9 +109,11 @@ const FAQItem = ({ faq, isOpen, onClick }: FAQItemProps) => {
       {isOpen && (
         <div
           style={{
-            padding: "0 1.4rem 1.2rem",
+            padding: "0 18px 16px",
             color: "#cbd5e1",
+            fontSize: "14px",
             lineHeight: 1.7,
+            borderTop: "1px solid rgba(255,255,255,0.05)",
           }}
         >
           {faq.answer}
@@ -126,20 +131,19 @@ export default function FAQPage() {
       style={{
         minHeight: "100vh",
         background:
-          "radial-gradient(circle at top, #111827 0%, #0b1120 45%, #020617 100%)",
+          "radial-gradient(circle at top, #0b0f14 0%, #05070a 50%, #000000 100%)",
         color: "#fff",
         fontFamily: "Inter, sans-serif",
-        padding: "4rem 1.5rem",
+        padding: "60px 20px",
       }}
     >
       <div style={{ maxWidth: "900px", margin: "0 auto" }}>
         {/* HEADER */}
-        <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+        <div style={{ textAlign: "center", marginBottom: "40px" }}>
           <h1
             style={{
-              fontSize: "2.8rem",
+              fontSize: "42px",
               fontWeight: 800,
-              marginBottom: "1rem",
               background:
                 "linear-gradient(to right, #ffffff, #93c5fd, #60a5fa)",
               WebkitBackgroundClip: "text",
@@ -149,42 +153,40 @@ export default function FAQPage() {
             Frequently Asked Questions
           </h1>
 
-          <p style={{ color: "#94a3b8", lineHeight: 1.8, fontSize: "1rem" }}>
-            Everything you need to know about planning trips, booking rides,
-            generating itineraries, and traveling securely with Sarthi.
+          <p style={{ color: "#94a3b8", marginTop: "12px" }}>
+            Everything about booking, planning, and traveling with Sarthi.
           </p>
         </div>
 
-        {/* FEATURES */}
+        {/* FEATURE CARDS */}
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "1.2rem",
-            marginBottom: "3rem",
+            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+            gap: "14px",
+            marginBottom: "35px",
           }}
         >
           {[
-            { icon: <Plane size={22} />, title: "Smart Planning" },
-            { icon: <MapPinned size={22} />, title: "Live Navigation" },
-            { icon: <ShieldCheck size={22} />, title: "Secure Platform" },
-            { icon: <Headphones size={22} />, title: "24/7 Support" },
+            { icon: <Plane size={20} />, title: "Smart Planning" },
+            { icon: <MapPinned size={20} />, title: "Live Navigation" },
+            { icon: <ShieldCheck size={20} />, title: "Secure System" },
+            { icon: <Headphones size={20} />, title: "24/7 Support" },
           ].map((item, i) => (
             <div
               key={i}
               style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.08)",
-                borderRadius: "16px",
-                padding: "1.2rem",
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.06)",
+                borderRadius: "12px",
+                padding: "16px",
                 textAlign: "center",
-                color: "#fff",
               }}
             >
-              <div style={{ color: "#60a5fa", marginBottom: "0.5rem" }}>
+              <div style={{ color: "#60a5fa", marginBottom: "6px" }}>
                 {item.icon}
               </div>
-              <p style={{ fontSize: "0.95rem", fontWeight: 600 }}>
+              <p style={{ fontSize: "13px", fontWeight: 600 }}>
                 {item.title}
               </p>
             </div>

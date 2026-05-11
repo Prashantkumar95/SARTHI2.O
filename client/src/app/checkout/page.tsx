@@ -628,381 +628,381 @@
 
 
 
-// "use client";
-
-// import { motion, AnimatePresence } from "framer-motion";
-// import {
-//   MapPin,
-//   Navigation,
-//   ShieldCheck,
-//   Bike,
-//   Car,
-//   Truck,
-//   Loader2,
-//   CheckCircle2,
-//   XCircle,
-//   Clock,
-//   CreditCard,
-//   Banknote,
-//   ArrowRight,
-//   RotateCcw,
-//   AlertCircle,
-//   Wallet,
-// } from "lucide-react";
-
-// import {
-//   useState,
-//   useEffect,
-//   Suspense,
-// } from "react";
-
-// import { useSearchParams } from "next/navigation";
-// import { getSocket } from "@/lib/socket";
-
-// const VEHICLE_ICONS: Record<string, any> = {
-//   bike: Bike,
-//   auto: Car,
-//   car: Car,
-//   loading: Truck,
-//   truck: Truck,
-// };
-
-// type Status =
-//   | "idle"
-//   | "requested"
-//   | "awaiting_payment"
-//   | "rejected"
-//   | "expired"
-//   | "cancelled"
-//   | "payment"
-//   | "confirmed";
-
-// function CheckoutContent() {
-//   const params = useSearchParams();
-
-//   const pickup = params.get("pickup") || "Pickup Location";
-//   const drop = params.get("drop") || "Drop Location";
-//   const vehicle = params.get("vehicle") || "car";
-//   const vehicleId = params.get("vehicleId");
-//   const fare = Number(params.get("fare")) || 249;
-//   const mobileNumber = params.get("mobileNumber") || "";
-//   const driverId = params.get("driverId");
-
-//   const pickupLat = Number(params.get("pickupLat"));
-//   const pickupLng = Number(params.get("pickupLng"));
-
-//   const dropLat = Number(params.get("dropLat"));
-//   const dropLng = Number(params.get("dropLng"));
-
-//   const VehicleIcon =
-//     VEHICLE_ICONS[vehicle.toLowerCase()] || Car;
-
-//   const [loading, setLoading] = useState(false);
-
-//   const [bookingId, setBookingId] =
-//     useState<string | null>(null);
-
-//   const [status, setStatus] =
-//     useState<Status>("idle");
-
-//   const [paymentMethod, setPaymentMethod] =
-//     useState<"cash" | "online" | null>(null);
-
-//   /* ───────── CREATE BOOKING ───────── */
-
-//   const handleCreateBooking = async () => {
-//     try {
-//       setLoading(true);
-
-//       const res = await fetch("/api/booking/create", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-
-//         body: JSON.stringify({
-//           vehicleId,
-//           driverId,
-
-//           pickupAddress: pickup,
-//           dropAddress: drop,
-
-//           pickupLocation: {
-//             type: "Point",
-//             coordinates: [pickupLng, pickupLat],
-//           },
+"use client";
+
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  MapPin,
+  Navigation,
+  ShieldCheck,
+  Bike,
+  Car,
+  Truck,
+  Loader2,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  CreditCard,
+  Banknote,
+  ArrowRight,
+  RotateCcw,
+  AlertCircle,
+  Wallet,
+} from "lucide-react";
+
+import {
+  useState,
+  useEffect,
+  Suspense,
+} from "react";
+
+import { useSearchParams } from "next/navigation";
+import { getSocket } from "@/lib/socket";
+
+const VEHICLE_ICONS: Record<string, any> = {
+  bike: Bike,
+  auto: Car,
+  car: Car,
+  loading: Truck,
+  truck: Truck,
+};
+
+type Status =
+  | "idle"
+  | "requested"
+  | "awaiting_payment"
+  | "rejected"
+  | "expired"
+  | "cancelled"
+  | "payment"
+  | "confirmed";
+
+function CheckoutContent() {
+  const params = useSearchParams();
+
+  const pickup = params.get("pickup") || "Pickup Location";
+  const drop = params.get("drop") || "Drop Location";
+  const vehicle = params.get("vehicle") || "car";
+  const vehicleId = params.get("vehicleId");
+  const fare = Number(params.get("fare")) || 249;
+  const mobileNumber = params.get("mobileNumber") || "";
+  const driverId = params.get("driverId");
+
+  const pickupLat = Number(params.get("pickupLat"));
+  const pickupLng = Number(params.get("pickupLng"));
+
+  const dropLat = Number(params.get("dropLat"));
+  const dropLng = Number(params.get("dropLng"));
+
+  const VehicleIcon =
+    VEHICLE_ICONS[vehicle.toLowerCase()] || Car;
+
+  const [loading, setLoading] = useState(false);
+
+  const [bookingId, setBookingId] =
+    useState<string | null>(null);
+
+  const [status, setStatus] =
+    useState<Status>("idle");
+
+  const [paymentMethod, setPaymentMethod] =
+    useState<"cash" | "online" | null>(null);
+
+  /* ───────── CREATE BOOKING ───────── */
+
+  const handleCreateBooking = async () => {
+    try {
+      setLoading(true);
+
+      const res = await fetch("/api/booking/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          vehicleId,
+          driverId,
+
+          pickupAddress: pickup,
+          dropAddress: drop,
+
+          pickupLocation: {
+            type: "Point",
+            coordinates: [pickupLng, pickupLat],
+          },
 
-//           dropLocation: {
-//             type: "Point",
-//             coordinates: [dropLng, dropLat],
-//           },
+          dropLocation: {
+            type: "Point",
+            coordinates: [dropLng, dropLat],
+          },
 
-//           fare,
-//           mobileNumber,
-//         }),
-//       });
+          fare,
+          mobileNumber,
+        }),
+      });
 
-//       const data = await res.json();
+      const data = await res.json();
 
-//       if (data.success) {
-//         setBookingId(data.booking._id);
-//         setStatus("requested");
-//       } else {
-//         alert(data.message || "Booking failed");
-//       }
-//     } catch {
-//       alert("Something went wrong");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+      if (data.success) {
+        setBookingId(data.booking._id);
+        setStatus("requested");
+      } else {
+        alert(data.message || "Booking failed");
+      }
+    } catch {
+      alert("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-//   /* ───────── LOAD RAZORPAY ───────── */
+  /* ───────── LOAD RAZORPAY ───────── */
 
-//   function loadRazorpayScript() {
-//     return new Promise((resolve) => {
-//       if (typeof window === "undefined") {
-//         resolve(false);
-//         return;
-//       }
+  function loadRazorpayScript() {
+    return new Promise((resolve) => {
+      if (typeof window === "undefined") {
+        resolve(false);
+        return;
+      }
 
-//       if ((window as any).Razorpay) {
-//         resolve(true);
-//         return;
-//       }
+      if ((window as any).Razorpay) {
+        resolve(true);
+        return;
+      }
 
-//       const script = document.createElement("script");
+      const script = document.createElement("script");
 
-//       script.src =
-//         "https://checkout.razorpay.com/v1/checkout.js";
+      script.src =
+        "https://checkout.razorpay.com/v1/checkout.js";
 
-//       script.onload = () => resolve(true);
+      script.onload = () => resolve(true);
 
-//       script.onerror = () => resolve(false);
+      script.onerror = () => resolve(false);
 
-//       document.body.appendChild(script);
-//     });
-//   }
+      document.body.appendChild(script);
+    });
+  }
 
-//   /* ───────── PAYMENT CONFIRM ───────── */
+  /* ───────── PAYMENT CONFIRM ───────── */
 
-//   const handlePaymentConfirm = async () => {
-//     if (!bookingId || !paymentMethod) return;
+  const handlePaymentConfirm = async () => {
+    if (!bookingId || !paymentMethod) return;
 
-//     setLoading(true);
+    setLoading(true);
 
-//     try {
-//       /* CASH */
+    try {
+      /* CASH */
 
-//       if (paymentMethod === "cash") {
-//         const res = await fetch(
-//           `/api/booking/${bookingId}/confirm-payment`,
-//           {
-//             method: "POST",
+      if (paymentMethod === "cash") {
+        const res = await fetch(
+          `/api/booking/${bookingId}/confirm-payment`,
+          {
+            method: "POST",
 
-//             headers: {
-//               "Content-Type": "application/json",
-//             },
+            headers: {
+              "Content-Type": "application/json",
+            },
 
-//             body: JSON.stringify({
-//               method: "cash",
-//             }),
-//           }
-//         );
+            body: JSON.stringify({
+              method: "cash",
+            }),
+          }
+        );
 
-//         const data = await res.json();
+        const data = await res.json();
 
-//         if (data.success) {
-//           window.location.href = `/ride/${bookingId}`;
-//         }
+        if (data.success) {
+          window.location.href = `/ride/${bookingId}`;
+        }
 
-//         return;
-//       }
+        return;
+      }
 
-//       /* LOAD RAZORPAY */
+      /* LOAD RAZORPAY */
 
-//       const razorpayLoaded =
-//         await loadRazorpayScript();
+      const razorpayLoaded =
+        await loadRazorpayScript();
 
-//       if (!razorpayLoaded) {
-//         alert("Razorpay SDK failed to load");
-//         return;
-//       }
+      if (!razorpayLoaded) {
+        alert("Razorpay SDK failed to load");
+        return;
+      }
 
-//       /* CREATE ORDER */
+      /* CREATE ORDER */
 
-//       const orderRes = await fetch(
-//         "/api/payment/create",
-//         {
-//           method: "POST",
+      const orderRes = await fetch(
+        "/api/payment/create",
+        {
+          method: "POST",
 
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
+          headers: {
+            "Content-Type": "application/json",
+          },
 
-//           body: JSON.stringify({
-//             bookingId,
-//           }),
-//         }
-//       );
+          body: JSON.stringify({
+            bookingId,
+          }),
+        }
+      );
 
-//       const orderData = await orderRes.json();
+      const orderData = await orderRes.json();
 
-//       const options = {
-//         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
 
-//         amount: orderData.amount,
+        amount: orderData.amount,
 
-//         currency: "INR",
+        currency: "INR",
 
-//         name: "Sarthi",
+        name: "Sarthi",
 
-//         description: "Ride Payment",
+        description: "Ride Payment",
 
-//         order_id: orderData.orderId,
+        order_id: orderData.orderId,
 
-//         handler: async function (response: any) {
-//           const verify = await fetch(
-//             "/api/payment/verify",
-//             {
-//               method: "POST",
+        handler: async function (response: any) {
+          const verify = await fetch(
+            "/api/payment/verify",
+            {
+              method: "POST",
 
-//               headers: {
-//                 "Content-Type": "application/json",
-//               },
+              headers: {
+                "Content-Type": "application/json",
+              },
 
-//               body: JSON.stringify({
-//                 bookingId,
-//                 ...response,
-//               }),
-//             }
-//           );
+              body: JSON.stringify({
+                bookingId,
+                ...response,
+              }),
+            }
+          );
 
-//           const verifyData = await verify.json();
+          const verifyData = await verify.json();
 
-//           if (verifyData.success) {
-//             window.location.href = `/ride/${bookingId}`;
-//           }
-//         },
-//       };
+          if (verifyData.success) {
+            window.location.href = `/ride/${bookingId}`;
+          }
+        },
+      };
 
-//       const paymentObject = new (window as any).Razorpay(
-//         options
-//       );
+      const paymentObject = new (window as any).Razorpay(
+        options
+      );
 
-//       paymentObject.open();
-//     } catch (err) {
-//       console.error(err);
+      paymentObject.open();
+    } catch (err) {
+      console.error(err);
 
-//       alert("Payment failed");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+      alert("Payment failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-//   /* ───────── CANCEL BOOKING ───────── */
+  /* ───────── CANCEL BOOKING ───────── */
 
-//   const handleCancelBooking = async () => {
-//     if (!bookingId) return;
+  const handleCancelBooking = async () => {
+    if (!bookingId) return;
 
-//     await fetch(
-//       `/api/booking/${bookingId}/cancel`,
-//       {
-//         method: "POST",
-//       }
-//     );
+    await fetch(
+      `/api/booking/${bookingId}/cancel`,
+      {
+        method: "POST",
+      }
+    );
 
-//     setStatus("cancelled");
-//   };
+    setStatus("cancelled");
+  };
 
-//   /* ───────── SOCKET ───────── */
+  /* ───────── SOCKET ───────── */
 
-//   useEffect(() => {
-//     const socket = getSocket();
+  useEffect(() => {
+    const socket = getSocket();
 
-//     socket.on("booking-updated", (data) => {
-//       if (data.status === "awaiting_payment") {
-//         setStatus("awaiting_payment");
-//       }
+    socket.on("booking-updated", (data) => {
+      if (data.status === "awaiting_payment") {
+        setStatus("awaiting_payment");
+      }
 
-//       if (data.status === "rejected") {
-//         setStatus("rejected");
-//       }
+      if (data.status === "rejected") {
+        setStatus("rejected");
+      }
 
-//       if (data.status === "confirmed") {
-//         setStatus("confirmed");
-//       }
-//     });
+      if (data.status === "confirmed") {
+        setStatus("confirmed");
+      }
+    });
 
-//     return () => {
-//       socket.off("booking-updated");
-//     };
-//   }, []);
+    return () => {
+      socket.off("booking-updated");
+    };
+  }, []);
 
-//   /* ───────── RESTORE ACTIVE BOOKING ───────── */
+  /* ───────── RESTORE ACTIVE BOOKING ───────── */
 
-//   useEffect(() => {
-//     (async () => {
-//       const res = await fetch("/api/booking/my-active");
+  useEffect(() => {
+    (async () => {
+      const res = await fetch("/api/booking/my-active");
 
-//       const data = await res.json();
+      const data = await res.json();
 
-//       if (data.booking) {
-//         setBookingId(data.booking._id);
+      if (data.booking) {
+        setBookingId(data.booking._id);
 
-//         setStatus(data.booking.status);
-//       }
-//     })();
-//   }, []);
+        setStatus(data.booking.status);
+      }
+    })();
+  }, []);
 
-//   /* ───────── PAYMENT DELAY ───────── */
+  /* ───────── PAYMENT DELAY ───────── */
 
-//   useEffect(() => {
-//     if (status !== "awaiting_payment") return;
+  useEffect(() => {
+    if (status !== "awaiting_payment") return;
 
-//     const t = setTimeout(() => {
-//       setStatus("payment");
-//     }, 2000);
+    const t = setTimeout(() => {
+      setStatus("payment");
+    }, 2000);
 
-//     return () => clearTimeout(t);
-//   }, [status]);
+    return () => clearTimeout(t);
+  }, [status]);
 
-//   const vehicleLabel =
-//     vehicle.charAt(0).toUpperCase() +
-//     vehicle.slice(1);
+  const vehicleLabel =
+    vehicle.charAt(0).toUpperCase() +
+    vehicle.slice(1);
 
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-zinc-100">
-//       <div className="text-center">
-//         <h1 className="text-4xl font-black mb-4">
-//           Checkout
-//         </h1>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-zinc-100">
+      <div className="text-center">
+        <h1 className="text-4xl font-black mb-4">
+          Checkout
+        </h1>
 
-//         <p className="text-zinc-500">
-//           {pickup} → {drop}
-//         </p>
+        <p className="text-zinc-500">
+          {pickup} → {drop}
+        </p>
 
-//         <p className="mt-3 text-2xl font-bold">
-//           ₹{fare}
-//         </p>
+        <p className="mt-3 text-2xl font-bold">
+          ₹{fare}
+        </p>
 
-//         <button
-//           onClick={handleCreateBooking}
-//           className="mt-6 px-6 py-3 bg-black text-white rounded-xl"
-//         >
-//           Book Ride
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
+        <button
+          onClick={handleCreateBooking}
+          className="mt-6 px-6 py-3 bg-black text-white rounded-xl"
+        >
+          Book Ride
+        </button>
+      </div>
+    </div>
+  );
+}
 
-// /* ───────── SUSPENSE FIX ───────── */
+/* ───────── SUSPENSE FIX ───────── */
 
-// export default function CheckoutPage() {
-//   return (
-//     <Suspense fallback={<div>Loading...</div>}>
-//       <CheckoutContent />
-//     </Suspense>
-//   );
-// }
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CheckoutContent />
+    </Suspense>
+  );
+}

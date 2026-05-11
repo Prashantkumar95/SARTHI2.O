@@ -1032,7 +1032,7 @@ type Status =
   | "rejected" | "expired" | "cancelled"
   | "payment" | "confirmed";
 
-export default function CheckoutContent() {
+export default function CheckoutPage() {
   const params = useSearchParams();
 
   const pickup    = params.get("pickup")    || "Pickup Location";
@@ -1053,6 +1053,11 @@ export default function CheckoutContent() {
   const [bookingId,     setBookingId]     = useState<string | null>(null);
   const [status,        setStatus]        = useState<Status>("idle");
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "online" | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   /* ── CREATE BOOKING ── */
   const handleCreateBooking = async () => {
@@ -1194,9 +1199,13 @@ export default function CheckoutContent() {
   /* ── RESTORE ── */
   useEffect(() => {
     (async () => {
-      const res  = await fetch("/api/booking/my-active");
-      const data = await res.json();
-      if (data.booking) { setBookingId(data.booking._id); setStatus(data.booking.status); }
+      try {
+        const res  = await fetch("/api/booking/my-active");
+        const data = await res.json();
+        if (data.booking) { setBookingId(data.booking._id); setStatus(data.booking.status); }
+      } catch (error) {
+        console.error("Failed to restore booking:", error);
+      }
     })();
   }, []);
 
@@ -1209,6 +1218,18 @@ export default function CheckoutContent() {
 
   /* ── label ── */
   const vehicleLabel = vehicle.charAt(0).toUpperCase() + vehicle.slice(1);
+
+  // Don't render anything on the server - this prevents the prerender error
+  if (!isMounted) {
+    return (
+      <div className="min-h-screen bg-zinc-100 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-2 border-zinc-900 border-t-transparent rounded-full animate-spin" />
+          <p className="text-zinc-500 text-sm font-medium">Loading checkout...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-zinc-100 px-4 py-12">

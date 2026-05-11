@@ -1012,6 +1012,7 @@
 // deepseek code 
 "use client";
 
+import { Suspense, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MapPin, Navigation, ShieldCheck,
@@ -1019,7 +1020,6 @@ import {
   XCircle, Clock, CreditCard, Banknote,
   ArrowRight, RotateCcw, AlertCircle, Wallet,
 } from "lucide-react";
-import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { getSocket } from "@/lib/socket";
 
@@ -1032,7 +1032,8 @@ type Status =
   | "rejected" | "expired" | "cancelled"
   | "payment" | "confirmed";
 
-export default function CheckoutPage() {
+// Component that uses useSearchParams - wrapped in Suspense below
+function CheckoutContent() {
   const params = useSearchParams();
 
   const pickup    = params.get("pickup")    || "Pickup Location";
@@ -1639,5 +1640,26 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Loading fallback component
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-zinc-100 flex items-center justify-center">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-10 h-10 border-2 border-zinc-900 border-t-transparent rounded-full animate-spin" />
+        <p className="text-zinc-500 text-sm font-medium">Loading checkout...</p>
+      </div>
+    </div>
+  );
+}
+
+// Main export - wraps the component that uses useSearchParams in Suspense
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <CheckoutContent />
+    </Suspense>
   );
 }
